@@ -1,0 +1,177 @@
+import java.util.Scanner;
+import java.util.Vector;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Presiona 'A2' para activar el modo autónomo...");
+        String inicio = scanner.next();
+
+        if (!compararSinMayusculas(inicio, "A2")) {
+            System.out.println("Modo autónomo no activado. Saliendo del programa.");
+            return;
+        }
+
+        double distanciaCoche = 50.0;
+        double gradosCoche = 260.0;
+        double alturaGarra = 0.0;
+        double distanciaDerechaGarra = 0.0;
+        Vector<Double> avanceRobot = new Vector<>();
+        Vector<Double> gradosRobot = new Vector<>();
+
+        double distanciaCocheEntrega = 35.0;
+        double gradosCocheEntrega = 310.0;
+
+        System.out.println("Durante el modo autónomo, el robot se movió 10 metros y giró 50 grados, ahora debes avanzar 50m y girar 260 grados");
+        System.out.println("Ahora estás en modo 'Driver', buena suerte");
+        System.out.println("Control del robot:");
+        System.out.println(" - Para moverte, ingresa 'A0' (Palanca Izquierda)");
+        System.out.println(" - Para girar, ingresa 'POV' (Cruceta)");
+        System.out.println(" - Para verificar el coche, ingresa '3' (Botón Y)");
+        System.out.println(" - Para verificar la garra, ingresa '1' (Botón B)");
+        System.out.println(" - Para entrar a 'Pits', ingresa '2' (Botón XBOX)");
+        System.out.println(" - Para salir, ingresa 'SEIS' (Select)");
+
+        while (true) {
+            System.out.print("Ingresa la acción: ");
+            String accion = scanner.next();
+
+            if (compararSinMayusculas(accion, "A0")) {
+                System.out.print("Ingresa distancia para moverte: ");
+                double distanciaMover = scanner.nextDouble();
+
+                avanceRobot.add(distanciaMover);
+
+                double distanciaRelativa = distanciaCoche;
+                for (double distancia : avanceRobot) {
+                    distanciaRelativa -= distancia;
+                    System.out.println("Avanzando hacia adelante");
+                }
+                System.out.println("Falta: " + distanciaRelativa + " m, " + gradosCoche + " grados.");
+            } else if (compararSinMayusculas(accion, "POV")) {
+                System.out.print("Ingresa grados para girar: ");
+                double gradosGirar = scanner.nextDouble();
+
+                gradosRobot.add(gradosGirar);
+
+                for (double grados : gradosRobot) {
+                    gradosCoche -= grados;
+                }
+                System.out.println("Girando " + gradosGirar + " grados.");
+            } else if (compararSinMayusculas(accion, "3")) {
+                System.out.println("Altura Coche: -20 cm, Derecha Coche: 30 cm.");
+
+                double distanciaRelativa = distanciaCoche;
+                for (double distancia : avanceRobot) {
+                    distanciaRelativa -= distancia;
+                }
+                System.out.println("Falta: " + distanciaRelativa + " m, " + gradosCoche + " grados.");
+
+                if (distanciaRelativa == 0.0 && gradosCoche == 0.0) {
+                    System.out.println("Puedes entrar al modo 'a los pits'.");
+
+                    while (true) {
+                        System.out.println(" - Para usar el pistón que mueve la pinza a la derecha, ingresa 'A3' (Gatillo Derecho)");
+                        System.out.println(" - Para usar el pistón que mueve la pinza a la izquierda, ingresa 'A2' (Gatillo Izquierdo)");
+                        System.out.println(" - Para usar el pistón que mueve la pinza hacia abajo, ingresa 'A4' (Palanca Derecha)");
+                        System.out.println(" - Para intentar recoger el coche, ingresa '2' (Botón X)");
+                        System.out.println(" - Para salir de 'Pits', ingresa 'SIETE'");
+
+                        String accionPits;
+                        System.out.print("Ingresa la acción: ");
+                        System.out.println("El coche se encuentra 30cm a la derecha y -20cm hacia abajo");
+                        accionPits = scanner.next();
+
+                        if (compararSinMayusculas(accionPits, "A3") || compararSinMayusculas(accionPits, "a3")) {
+                            distanciaDerechaGarra += 5.0;
+                            System.out.println("Moviendo garra 5 cm a la derecha.");
+                        } else if (compararSinMayusculas(accionPits, "A2") || compararSinMayusculas(accionPits, "a2")) {
+                            distanciaDerechaGarra -= 5.0;
+                            System.out.println("Moviendo garra 5 cm a la izquierda.");
+                        } else if (compararSinMayusculas(accionPits, "A4") || compararSinMayusculas(accionPits, "a4")) {
+                            alturaGarra -= 5.0;
+                            System.out.println("Moviendo garra 5 cm hacia abajo.");
+                        } else if (compararSinMayusculas(accionPits, "2")) {
+                            if (alturaGarra == -20.0 && distanciaDerechaGarra == 30.0) {
+                                System.out.println("Recogiendo coche y cambiando las llantas... ¡Éxito!");
+                                break;
+                            } else {
+                                System.out.println("Coordenadas de garra incorrectas para recoger el coche.");
+                            }
+                        } else if (compararSinMayusculas(accionPits, "SIETE")) {
+                            System.out.println("Saliendo del modo 'A los Pits'.");
+                            break;
+                        } else {
+                            System.out.println("Acción no reconocida");
+                        }
+                    }
+                } else {
+                    System.out.println("No puedes entrar al modo 'A los Pits' hasta que llegues al coche.");
+                }
+            } else if (compararSinMayusculas(accion, "SIETE")) {
+                break;
+            } else {
+                System.out.println("Acción no reconocida");
+            }
+        }
+        
+        while (true) {
+            System.out.println("Has agarrado el coche. Debes ir a entregarlo.");
+            System.out.println("Distancia para entregar:",distanciaCocheEntrega,"m, Girar: ", gradosCocheEntrega, "grados." );
+
+            String accionEntrega;
+            double distanciaMetros = 0.0;
+            double gradosGirar = 0.0;
+
+            while (true) {
+                System.out.println("Ingresa la acción ('A0 para moverte, 'POV' para girar, 'CINCO' para salir): ");
+                Scanner.next = accionEntrega;
+                
+                if (compararSinMayusculas(accionEntrega, "A0")) {
+                    System.out.println("Ingresa distancia para moverte:");
+                    Scanner.next = distanciaMetros;
+                } else if (compararSinMayusculas(accionEntrega, "POV")) {
+                    System.out.println("Ingresa grados para girar: ");
+                    Scanner.next = distanciaMetros
+                } else if (compararSinMayusculas(accionEntrega, "CINCO")) {
+                    System.out.println ("Saliendo del modo 'Entrega'.");
+                    break;
+                } else {
+                    System.out.println("Acción no reconocida");
+                    continue;
+                }
+                
+                distanciaCocheEntrega -= distanciaMetros;
+                gradosCocheEntrega -= gradosGirar;
+    
+                System.out.println ("Falta: ", distanciaCocheEntrega," m, Girar: ", gradosCocheEntrega, " grados.");
+    
+                if (distanciaCocheEntrega <= 0.0 && gradosCocheEntrega <= 0.0) {
+                    System.out.println ("Llegaste al punto de entrega, ¿soltar coche? ('CERO' para sí, 'N' para no, 'A3' para activar la red para recoger las piezas dentro del área de entrega");
+                    string respuesta;
+                    Scanner.next = respuesta;
+                    if (compararSinMayusculas(respuesta, "CERO")) {
+                        System.out.println  ("¡Coche entregado con éxito!");
+                        break;
+                    } else if (compararSinMayusculas(respuesta, "N")) {
+                        break;
+                    } else if (compararSinMayusculas(respuesta, "A3")) {
+                        System.out.println ("Red activada, piezas del área de entrega recogidas")endl;
+                        System.out.println ("Coche entregado, ¡felicidades!")endl;
+                    }
+                }
+            }
+            break; // Salir del bucle del modo "Entrega"
+        }
+    
+        return 0;
+        }
+    
+    }
+
+    private static boolean compararSinMayusculas(String str1, String str2) {
+        return str1.equalsIgnoreCase(str2);
+    }
+}
